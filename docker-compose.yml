@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: neusis-pg
+    environment:
+      POSTGRES_DB: neusis
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env}
+      TZ: Asia/Seoul
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d neusis || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+
+  backapi:
+    image: ghcr.io/YeonwooNuf/neusis-backapi:${BACKAPI_TAG:-main}
+    container_name: neusis-backapi
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/neusis
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?set in .env}
+      TZ: Asia/Seoul
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    image: ghcr.io/YeonwooNuf/neusis-frontend:${FRONTEND_TAG:-main}
+    container_name: neusis-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backapi
+
+  ml:
+    image: ghcr.io/YeonwooNuf/neusis-ml:${ML_TAG:-main}
+    container_name: neusis-ml
+    environment:
+      BACKAPI_BASE: http://backapi:8080
+      TZ: Asia/Seoul
+    depends_on:
+      - backapi
+
+volumes:
+  pgdata:
