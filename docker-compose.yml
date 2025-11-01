@@ -21,10 +21,12 @@ services:
       retries: 15
 
   # =========================
-  # Spring Boot 백엔드 API
+  # Spring Boot 백엔드 API (로컬 빌드)
   # =========================
   backapi:
-    image: ghcr.io/YeonwooNuf/neusis-backapi:${BACKAPI_TAG:-main}
+    build:
+      context: ../Neusis-backAPI     # 백엔드 로컬 경로
+      dockerfile: Dockerfile
     container_name: neusis-backapi
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -42,7 +44,9 @@ services:
   # React 프론트엔드 (Vite build + Nginx serve)
   # =========================
   frontend:
-    image: ghcr.io/YeonwooNuf/neusis-frontend:${FRONTEND_TAG:-main}
+    build:
+      context: ../Neusis-frontend    # 프론트 로컬 경로
+      dockerfile: Dockerfile
     container_name: neusis-frontend
     ports:
       - "5173:80"
@@ -50,14 +54,18 @@ services:
       - backapi
 
   # =========================
-  # FastAPI 머신러닝 서비스 (임시 주석처리 후 나중에 활성화 예정)
+  # FastAPI 머신러닝 서비스 (나중에 활성화)
   # =========================
   # ml:
-  #   image: ghcr.io/YeonwooNuf/neusis-ml:${ML_TAG:-main}
+  #   build:
+  #     context: ../Neusis-ml
+  #     dockerfile: Dockerfile
   #   container_name: neusis-ml
   #   environment:
   #     BACKAPI_BASE: http://backapi:8080
   #     TZ: Asia/Seoul
+  #   ports:
+  #     - "8000:8000"
   #   depends_on:
   #     - backapi
 
