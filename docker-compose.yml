@@ -50,10 +50,12 @@ services:
     container_name: neusis-frontend
     working_dir: /app
     volumes:
-      - ../Neusis-frontend:/app       # 🔥 로컬 소스 -> 컨테이너 실시간 반영
-      - /app/node_modules             # 🔥 node_modules는 컨테이너 안에 유지
+      - ../Neusis-frontend:/app       # 로컬 소스 -> 컨테이너 실시간 반영
+      - /app/node_modules             # node_modules는 컨테이너 안에 유지
     ports:
       - "5173:5173"                   # 브라우저: http://localhost:5173
+    environment:
+      - VITE_API_BASE_URL=http://backapi:8080/api
     depends_on:
       - backapi
 
