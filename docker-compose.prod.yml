@@ -45,15 +45,11 @@ services:
   # =========================
   frontend:
     build:
-      context: ../Neusis-frontend
-      dockerfile: Dockerfile          # 너가 dev용으로 바꾼 Dockerfile
+      context: ../Neusis-frontend    # 프론트 로컬 경로
+      dockerfile: Dockerfile
     container_name: neusis-frontend
-    working_dir: /app
-    volumes:
-      - ../Neusis-frontend:/app       # 🔥 로컬 소스 -> 컨테이너 실시간 반영
-      - /app/node_modules             # 🔥 node_modules는 컨테이너 안에 유지
     ports:
-      - "5173:5173"                   # 브라우저: http://localhost:5173
+      - "5173:80"
     depends_on:
       - backapi
 
