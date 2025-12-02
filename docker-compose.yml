@@ -33,6 +33,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/neusis
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?set in .env}
+      AI_BASE_URL: http://host.docker.internal:8001
       TZ: Asia/Seoul
     ports:
       - "8080:8080"
